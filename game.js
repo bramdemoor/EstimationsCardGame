@@ -2,8 +2,9 @@ var Bdm;
 (function (Bdm) {
     (function (Estimations) {
         var Player = (function () {
-            function Player(name) {
+            function Player(name, game) {
                 this.name = name;
+                this.game = game;
                 this.hand = new Array();
             }
             Player.prototype.giveCard = function (card) {
@@ -14,6 +15,12 @@ var Bdm;
                     name: name,
                     estimate: Math.floor(this.hand.length / 4)
                 };
+            };
+            Player.prototype.doTurn = function () {
+                this.game.putCard(this, this.hand.pop());
+            };
+            Player.prototype.hasCards = function () {
+                return this.hand.length > 0;
             };
             return Player;
         })();        
@@ -88,6 +95,7 @@ var Bdm;
                     this.cards.push(new Card(Suit.All[2], Rank.All[n]));
                     this.cards.push(new Card(Suit.All[3], Rank.All[n]));
                 }
+                this.shuffle();
             }
             Deck.prototype.shuffle = function () {
                 for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i) , x = this.cards[--i] , this.cards[i] = this.cards[j] , this.cards[j] = x) {
@@ -104,20 +112,32 @@ var Bdm;
         var Game = (function () {
             function Game() {
                 var myDeck = new Deck();
-                myDeck.shuffle();
+                var playing = true;
+                var currentPlayerIndex = 0;
+                var trump = Suit.Spades;
                 var estimates = [];
                 var players = [
-                    new Player("Bram"), 
-                    new Player("Player2"), 
-                    new Player("Player3"), 
-                    new Player("Player4")
+                    new Player("Bram", this), 
+                    new Player("Player2", this), 
+                    new Player("Player3", this), 
+                    new Player("Player4", this)
                 ];
                 myDeck.dealTo(players);
                 players.forEach(function (p) {
                     estimates.push(p.getEstimate());
                 });
-                console.log(estimates);
+                while(playing) {
+                    var player = players[currentPlayerIndex++ % players.length];
+                    if(!player.hasCards()) {
+                        playing = false;
+                        break;
+                    }
+                    player.doTurn();
+                }
             }
+            Game.prototype.putCard = function (player, card) {
+                console.log(player.name + ' puts card ' + card.toString());
+            };
             return Game;
         })();
         Estimations.Game = Game;        

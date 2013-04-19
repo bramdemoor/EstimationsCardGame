@@ -3,11 +3,15 @@ module Bdm.Estimations {
     class Player {
         hand: Card[] = new Card[];
 
-        constructor(public name: string) {}
+        constructor(public name: string, private game: Game) {}
 
         giveCard(card: Card) { this.hand.push(card); }
 
         getEstimate() { return { name: name, estimate: Math.floor(this.hand.length / 4) }; }
+
+        doTurn() { this.game.putCard(this, this.hand.pop()); }
+
+        hasCards() { return this.hand.length > 0; }
     }
 
     class Suit {
@@ -58,6 +62,8 @@ module Bdm.Estimations {
                 this.cards.push(new Card(Suit.All[2], Rank.All[n]));
                 this.cards.push(new Card(Suit.All[3], Rank.All[n]));
             }
+
+            this.shuffle();
         }
 
         shuffle() {
@@ -75,22 +81,36 @@ module Bdm.Estimations {
     export class Game {
         constructor() {
             var myDeck = new Deck();
-            myDeck.shuffle();
+
+            var playing = true;
+            var currentPlayerIndex = 0;
+
+            var trump = Suit.Spades;
 
             var estimates = [];
-
-            var players = [
-                new Player("Bram"),
-                new Player("Player2"),
-                new Player("Player3"),
-                new Player("Player4")
-            ];
+            var players = [ new Player("Bram", this), new Player("Player2", this), new Player("Player3", this), new Player("Player4", this) ];
 
             myDeck.dealTo(players);
 
-            players.forEach((p: Player) => { estimates.push(p.getEstimate()); } )
+            players.forEach((p: Player) => { estimates.push(p.getEstimate()); } );
 
-            console.log(estimates);
+            while(playing) {
+
+                var player = players[currentPlayerIndex++ % players.length];
+
+                if(!player.hasCards()) {
+                    playing = false;
+                    break;
+                }
+
+                player.doTurn();
+            }
+
+
+        }
+
+        putCard(player: Player, card: Card) {
+            console.log(player.name + ' puts card ' + card.toString());
         }
     }
 }
