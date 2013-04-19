@@ -83,6 +83,12 @@ var Bdm;
                 for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i) , x = this.cards[--i] , this.cards[i] = this.cards[j] , this.cards[j] = x) {
                 }
             };
+            Deck.prototype.dealTo = function (players) {
+                while(this.cards.length > 0) {
+                    var c = this.cards.pop();
+                    console.log('dealing card: ' + c.toString());
+                }
+            };
             return Deck;
         })();        
         var Game = (function () {
@@ -95,6 +101,7 @@ var Bdm;
                     new Player("Player3"), 
                     new Player("Player4")
                 ];
+                myDeck.dealTo(players);
                 console.log(myDeck.cards);
             }
             return Game;

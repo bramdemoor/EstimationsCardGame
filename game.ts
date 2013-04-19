@@ -58,6 +58,13 @@ module Bdm.Estimations {
             // Array shuffle by  Jonas Raoni Soares Silva | http://jsfromhell.com/array/shuffle [v1.0]
             for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i), x = this.cards[--i], this.cards[i] = this.cards[j], this.cards[j] = x) {}
         }
+
+        dealTo(players: Player[]) {
+            while(this.cards.length > 0) {
+                var c = this.cards.pop();
+                console.log('dealing card: ' + c.toString());
+            }
+        }
     }
 
     export class Game {
@@ -71,6 +78,8 @@ module Bdm.Estimations {
                 new Player("Player3"),
                 new Player("Player4")
             ];
+
+            myDeck.dealTo(players);
 
             console.log(myDeck.cards);
         }
