@@ -1,6 +1,12 @@
 var Bdm;
 (function (Bdm) {
     (function (Estimations) {
+        var Player = (function () {
+            function Player(name) {
+                this.name = name;
+            }
+            return Player;
+        })();        
         var Suit = (function () {
             function Suit(name, value) {
                 this.name = name;
@@ -76,7 +82,6 @@ var Bdm;
             Deck.prototype.shuffle = function () {
                 for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i) , x = this.cards[--i] , this.cards[i] = this.cards[j] , this.cards[j] = x) {
                 }
-                ;
             };
             return Deck;
         })();        
@@ -84,6 +89,12 @@ var Bdm;
             function Game() {
                 var myDeck = new Deck();
                 myDeck.shuffle();
+                var players = [
+                    new Player("Bram"), 
+                    new Player("Player2"), 
+                    new Player("Player3"), 
+                    new Player("Player4")
+                ];
                 console.log(myDeck.cards);
             }
             return Game;

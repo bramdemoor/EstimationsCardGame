@@ -1,5 +1,9 @@
 module Bdm.Estimations {
 
+    class Player {
+        constructor(public name: string) {}
+    }
+
     class Suit {
         static Hearts: Suit = new Suit("Hearts", 1);
         static Diamonds: Suit = new Suit("Diamonds", 2);
@@ -52,7 +56,7 @@ module Bdm.Estimations {
 
         shuffle() {
             // Array shuffle by  Jonas Raoni Soares Silva | http://jsfromhell.com/array/shuffle [v1.0]
-            for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i), x = this.cards[--i], this.cards[i] = this.cards[j], this.cards[j] = x) {};
+            for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i), x = this.cards[--i], this.cards[i] = this.cards[j], this.cards[j] = x) {}
         }
     }
 
@@ -60,6 +64,13 @@ module Bdm.Estimations {
         constructor() {
             var myDeck = new Deck();
             myDeck.shuffle();
+
+            var players = [
+                new Player("Bram"),
+                new Player("Player2"),
+                new Player("Player3"),
+                new Player("Player4")
+            ];
 
             console.log(myDeck.cards);
         }
