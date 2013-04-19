@@ -1,3 +1,4 @@
+///<reference path="knockout.d.ts" />
 ///<reference path="game.ts" />
 
 module Bdm.Estimations.UI {
@@ -10,6 +11,12 @@ module Bdm.Estimations.UI {
 
         startGame() {
             this.game = new Game();
+
+            ko.applyBindings(this);
+        }
+
+        nextTurn() {
+            console.log('next turn.');
         }
     }
 }

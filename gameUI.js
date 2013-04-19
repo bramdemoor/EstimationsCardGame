@@ -7,6 +7,10 @@ var Bdm;
                 }
                 GamePage.prototype.startGame = function () {
                     this.game = new Estimations.Game();
+                    ko.applyBindings(this);
+                };
+                GamePage.prototype.nextTurn = function () {
+                    console.log('next turn.');
                 };
                 return GamePage;
             })();
