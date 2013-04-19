@@ -26,7 +26,7 @@ module Bdm.Estimations {
 
         getEstimate() { return { name: name, estimate: Math.floor(this.hand.length / 4) }; }
 
-        doTurn() { this.game.stack.putCard(this, this.hand.pop()); }
+        doTurn() { this.game.currentRound.stack.putCard(this, this.hand.pop()); }
 
         hasCards() { return this.hand.length > 0; }
     }
@@ -37,9 +37,7 @@ module Bdm.Estimations {
     export class Card {
         constructor(public suit: Suits, public rank: Ranks) {}
 
-        getValueHash() { return this.suit * 10 + this.rank; }
-
-        static compare(a: Card, b: Card) { return a.getValueHash() - b.getValueHash(); }
+        static compare(a: Card, b: Card) { return (a.suit * 10 + a.rank) - (b.suit * 10 + b.rank); }
     }
 
     export class Deck {
@@ -59,58 +57,58 @@ module Bdm.Estimations {
         }
 
         dealTo(players: Player[]) {
-            var playerIndex = 0;
-            while(this.cards.length > 0) players[playerIndex++ % players.length].giveCard(this.cards.pop());
+            var playerIndex = 0; while(this.cards.length > 0) players[playerIndex++ % players.length].giveCard(this.cards.pop());
+        }
+    }
 
+    export class Round {
+        stack: CurrentStack;
+        deck: Deck;
+        estimates: any[] = new any[];
+
+        constructor(roundNumber: number, private game: Game) {
+            this.deck = new Deck(roundNumber * game.players.length);
+            this.stack = new CurrentStack();
+        }
+
+        play() {
+            var currentPlayerIndex = 0;
+            this.deck.dealTo(this.game.players);
+            this.game.players.forEach((p: Player) => { this.estimates.push(p.getEstimate()); } );
+            while(true) {
+
+                var player = this.game.players[currentPlayerIndex++ % this.game.players.length];
+
+                if(!player.hasCards()) { break; }
+
+                if(this.stack.isFull()) {
+                    var highest = this.stack.finalize();
+                    console.log('highest card was from ' + highest);
+                }
+
+                player.doTurn();
+            }
         }
     }
 
     export class Game {
-        stack: CurrentStack;
         players: Player[];
+        rounds: Round[] = new Round[];
+        currentRound: Round;
 
         constructor() {
             this.players = [ new Player("Bram", this), new Player("Player2", this), new Player("Player3", this), new Player("Player4", this) ];
 
-            var roundCounter = 0;
-            var roundsLeft = true;
+            var maxRounds = Math.floor(Deck.MAX_CARDS / this.players.length);
 
-            while(roundsLeft) {
-                var displayRound = roundCounter + 1;
+            while(true) {
+                if(this.rounds.length == maxRounds) break;
 
-                var cardsToRemoveCount = roundCounter++ * this.players.length;
+                this.currentRound = new Round(this.rounds.length + 1, this);
 
-                if(cardsToRemoveCount >= Deck.MAX_CARDS) {
-                    roundsLeft = false;
-                    break;
-                }
+                this.currentRound.play();
 
-                var myDeck = new Deck(cardsToRemoveCount);
-
-                this.stack = new CurrentStack();
-
-                var playing = true;
-                var currentPlayerIndex = 0;
-
-                var estimates = [];
-
-                myDeck.dealTo(this.players);
-
-                this.players.forEach((p: Player) => { estimates.push(p.getEstimate()); } );
-
-                while(playing) {
-
-                    var player = this.players[currentPlayerIndex++ % this.players.length];
-
-                    if(!player.hasCards()) { playing = false; break; }
-
-                    if(this.stack.isFull()) {
-                        var highest = this.stack.finalize();
-                        console.log('highest card was from ' + highest);
-                    }
-
-                    player.doTurn();
-                }
+                this.rounds.push(this.currentRound);
             }
         }
     }

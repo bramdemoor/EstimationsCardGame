@@ -44,7 +44,7 @@ var Bdm;
                 };
             };
             Player.prototype.doTurn = function () {
-                this.game.stack.putCard(this, this.hand.pop());
+                this.game.currentRound.stack.putCard(this, this.hand.pop());
             };
             Player.prototype.hasCards = function () {
                 return this.hand.length > 0;
@@ -97,11 +97,8 @@ var Bdm;
                 this.suit = suit;
                 this.rank = rank;
             }
-            Card.prototype.getValueHash = function () {
-                return this.suit * 10 + this.rank;
-            };
             Card.compare = function compare(a, b) {
-                return a.getValueHash() - b.getValueHash();
+                return (a.suit * 10 + a.rank) - (b.suit * 10 + b.rank);
             };
             return Card;
         })();
@@ -132,44 +129,52 @@ var Bdm;
             return Deck;
         })();
         Estimations.Deck = Deck;        
+        var Round = (function () {
+            function Round(roundNumber, game) {
+                this.game = game;
+                this.estimates = new Array();
+                this.deck = new Deck(roundNumber * game.players.length);
+                this.stack = new CurrentStack();
+            }
+            Round.prototype.play = function () {
+                var _this = this;
+                var currentPlayerIndex = 0;
+                this.deck.dealTo(this.game.players);
+                this.game.players.forEach(function (p) {
+                    _this.estimates.push(p.getEstimate());
+                });
+                while(true) {
+                    var player = this.game.players[currentPlayerIndex++ % this.game.players.length];
+                    if(!player.hasCards()) {
+                        break;
+                    }
+                    if(this.stack.isFull()) {
+                        var highest = this.stack.finalize();
+                        console.log('highest card was from ' + highest);
+                    }
+                    player.doTurn();
+                }
+            };
+            return Round;
+        })();
+        Estimations.Round = Round;        
         var Game = (function () {
             function Game() {
+                this.rounds = new Array();
                 this.players = [
                     new Player("Bram", this), 
                     new Player("Player2", this), 
                     new Player("Player3", this), 
                     new Player("Player4", this)
                 ];
-                var roundCounter = 0;
-                var roundsLeft = true;
-                while(roundsLeft) {
-                    var displayRound = roundCounter + 1;
-                    var cardsToRemoveCount = roundCounter++ * this.players.length;
-                    if(cardsToRemoveCount >= Deck.MAX_CARDS) {
-                        roundsLeft = false;
+                var maxRounds = Math.floor(Deck.MAX_CARDS / this.players.length);
+                while(true) {
+                    if(this.rounds.length == maxRounds) {
                         break;
                     }
-                    var myDeck = new Deck(cardsToRemoveCount);
-                    this.stack = new CurrentStack();
-                    var playing = true;
-                    var currentPlayerIndex = 0;
-                    var estimates = [];
-                    myDeck.dealTo(this.players);
-                    this.players.forEach(function (p) {
-                        estimates.push(p.getEstimate());
-                    });
-                    while(playing) {
-                        var player = this.players[currentPlayerIndex++ % this.players.length];
-                        if(!player.hasCards()) {
-                            playing = false;
-                            break;
-                        }
-                        if(this.stack.isFull()) {
-                            var highest = this.stack.finalize();
-                            console.log('highest card was from ' + highest);
-                        }
-                        player.doTurn();
-                    }
+                    this.currentRound = new Round(this.rounds.length + 1, this);
+                    this.currentRound.play();
+                    this.rounds.push(this.currentRound);
                 }
             }
             return Game;
