@@ -190,5 +190,4 @@ var Bdm;
     })(Bdm.Estimations || (Bdm.Estimations = {}));
     var Estimations = Bdm.Estimations;
 })(Bdm || (Bdm = {}));
-new Bdm.Estimations.Game();
 //@ sourceMappingURL=game.js.map

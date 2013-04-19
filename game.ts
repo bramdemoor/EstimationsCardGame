@@ -157,5 +157,3 @@ module Bdm.Estimations {
         }
     }
 }
-
-new Bdm.Estimations.Game();
