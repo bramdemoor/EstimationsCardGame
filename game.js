@@ -1,6 +1,15 @@
 var Bdm;
 (function (Bdm) {
     (function (Estimations) {
+        var CurrentStack = (function () {
+            function CurrentStack() {
+                this.cards = new Array();
+            }
+            CurrentStack.prototype.putCard = function (player, card) {
+                this.cards.push(card);
+            };
+            return CurrentStack;
+        })();        
         var Player = (function () {
             function Player(name, game) {
                 this.name = name;
@@ -17,7 +26,7 @@ var Bdm;
                 };
             };
             Player.prototype.doTurn = function () {
-                this.game.putCard(this, this.hand.pop());
+                this.game.stack.putCard(this, this.hand.pop());
             };
             Player.prototype.hasCards = function () {
                 return this.hand.length > 0;
@@ -112,6 +121,7 @@ var Bdm;
         var Game = (function () {
             function Game() {
                 var myDeck = new Deck();
+                this.stack = new CurrentStack();
                 var playing = true;
                 var currentPlayerIndex = 0;
                 var trump = Suit.Spades;
@@ -132,12 +142,13 @@ var Bdm;
                         playing = false;
                         break;
                     }
+                    if(this.stack.cards.length == 4) {
+                        this.stack.cards = [];
+                        console.log('stack was full');
+                    }
                     player.doTurn();
                 }
             }
-            Game.prototype.putCard = function (player, card) {
-                console.log(player.name + ' puts card ' + card.toString());
-            };
             return Game;
         })();
         Estimations.Game = Game;        

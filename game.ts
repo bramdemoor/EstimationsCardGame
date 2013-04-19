@@ -1,5 +1,13 @@
 module Bdm.Estimations {
 
+    class CurrentStack {
+        cards: Card[] = new Card[];
+
+        putCard(player: Player, card: Card) {
+            this.cards.push(card);
+        }
+    }
+
     class Player {
         hand: Card[] = new Card[];
 
@@ -9,7 +17,7 @@ module Bdm.Estimations {
 
         getEstimate() { return { name: name, estimate: Math.floor(this.hand.length / 4) }; }
 
-        doTurn() { this.game.putCard(this, this.hand.pop()); }
+        doTurn() { this.game.stack.putCard(this, this.hand.pop()); }
 
         hasCards() { return this.hand.length > 0; }
     }
@@ -79,8 +87,12 @@ module Bdm.Estimations {
     }
 
     export class Game {
+        stack: CurrentStack;
+
         constructor() {
             var myDeck = new Deck();
+
+            this.stack = new CurrentStack();
 
             var playing = true;
             var currentPlayerIndex = 0;
@@ -103,14 +115,13 @@ module Bdm.Estimations {
                     break;
                 }
 
+                if(this.stack.cards.length == 4) {
+                    this.stack.cards = [];
+                    console.log('stack was full');
+                }
+
                 player.doTurn();
             }
-
-
-        }
-
-        putCard(player: Player, card: Card) {
-            console.log(player.name + ' puts card ' + card.toString());
         }
     }
 }
