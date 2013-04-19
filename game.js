@@ -4,7 +4,11 @@ var Bdm;
         var Player = (function () {
             function Player(name) {
                 this.name = name;
+                this.hand = new Array();
             }
+            Player.prototype.giveCard = function (card) {
+                this.hand.push(card);
+            };
             return Player;
         })();        
         var Suit = (function () {
@@ -84,9 +88,9 @@ var Bdm;
                 }
             };
             Deck.prototype.dealTo = function (players) {
+                var playerIndex = 0;
                 while(this.cards.length > 0) {
-                    var c = this.cards.pop();
-                    console.log('dealing card: ' + c.toString());
+                    players[playerIndex++ % players.length].giveCard(this.cards.pop());
                 }
             };
             return Deck;
@@ -102,7 +106,7 @@ var Bdm;
                     new Player("Player4")
                 ];
                 myDeck.dealTo(players);
-                console.log(myDeck.cards);
+                console.log(players);
             }
             return Game;
         })();

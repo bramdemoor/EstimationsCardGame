@@ -1,7 +1,11 @@
 module Bdm.Estimations {
 
     class Player {
+        hand: Card[] = new Card[];
+
         constructor(public name: string) {}
+
+        giveCard(card: Card) { this.hand.push(card); }
     }
 
     class Suit {
@@ -60,10 +64,9 @@ module Bdm.Estimations {
         }
 
         dealTo(players: Player[]) {
-            while(this.cards.length > 0) {
-                var c = this.cards.pop();
-                console.log('dealing card: ' + c.toString());
-            }
+            var playerIndex = 0;
+            while(this.cards.length > 0) players[playerIndex++ % players.length].giveCard(this.cards.pop());
+
         }
     }
 
@@ -81,7 +84,7 @@ module Bdm.Estimations {
 
             myDeck.dealTo(players);
 
-            console.log(myDeck.cards);
+            console.log(players);
         }
     }
 }
