@@ -78,7 +78,7 @@ module Bdm.Estimations {
     class Deck {
         cards: Card[] = new Card[]();
 
-        constructor() {
+        constructor(cardsToRemoveCount: number = 0) {
             for(var n = 0; n<13; n++) {
                 this.cards.push(new Card(Suit.All[0], Rank.All[n]));
                 this.cards.push(new Card(Suit.All[1], Rank.All[n]));
@@ -87,6 +87,8 @@ module Bdm.Estimations {
             }
 
             this.shuffle();
+
+            this.cards.splice(0, cardsToRemoveCount);
         }
 
         shuffle() {
@@ -115,7 +117,14 @@ module Bdm.Estimations {
             while(roundsLeft) {
                 console.log('Dealing for round ' + (roundCounter + 1));
 
-                var myDeck = new Deck();
+                var cardsToRemoveCount = roundCounter++ * players.length;
+
+                if(cardsToRemoveCount >= 52) {
+                    roundsLeft = false;
+                    break;
+                }
+
+                var myDeck = new Deck(cardsToRemoveCount);
 
                 this.stack = new CurrentStack();
 
@@ -123,7 +132,6 @@ module Bdm.Estimations {
                 var currentPlayerIndex = 0;
 
                 var estimates = [];
-
 
                 myDeck.dealTo(players);
 
@@ -145,8 +153,6 @@ module Bdm.Estimations {
 
                     player.doTurn();
                 }
-
-                roundsLeft = false;
             }
         }
     }

@@ -119,7 +119,8 @@ var Bdm;
             return Card;
         })();        
         var Deck = (function () {
-            function Deck() {
+            function Deck(cardsToRemoveCount) {
+                if (typeof cardsToRemoveCount === "undefined") { cardsToRemoveCount = 0; }
                 this.cards = new Array();
                 for(var n = 0; n < 13; n++) {
                     this.cards.push(new Card(Suit.All[0], Rank.All[n]));
@@ -128,6 +129,7 @@ var Bdm;
                     this.cards.push(new Card(Suit.All[3], Rank.All[n]));
                 }
                 this.shuffle();
+                this.cards.splice(0, cardsToRemoveCount);
             }
             Deck.prototype.shuffle = function () {
                 for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i) , x = this.cards[--i] , this.cards[i] = this.cards[j] , this.cards[j] = x) {
@@ -154,7 +156,12 @@ var Bdm;
                 var roundsLeft = true;
                 while(roundsLeft) {
                     console.log('Dealing for round ' + (roundCounter + 1));
-                    var myDeck = new Deck();
+                    var cardsToRemoveCount = roundCounter++ * players.length;
+                    if(cardsToRemoveCount >= 52) {
+                        roundsLeft = false;
+                        break;
+                    }
+                    var myDeck = new Deck(cardsToRemoveCount);
                     this.stack = new CurrentStack();
                     var playing = true;
                     var currentPlayerIndex = 0;
@@ -175,7 +182,6 @@ var Bdm;
                         }
                         player.doTurn();
                     }
-                    roundsLeft = false;
                 }
             }
             return Game;
