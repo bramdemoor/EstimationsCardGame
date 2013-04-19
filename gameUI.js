@@ -10,6 +10,27 @@ var Bdm;
                         return rank.name + ' of ' + suit.name;
                     });
                 }
+                CardViewModel.suitNames = [
+                    "Hearts", 
+                    "Diamonds", 
+                    "Clubs", 
+                    "Spades"
+                ];
+                CardViewModel.rankNames = [
+                    "Ace", 
+                    "Two", 
+                    "Three", 
+                    "Four", 
+                    "Five", 
+                    "Six", 
+                    "Seven", 
+                    "Eight", 
+                    "Nine", 
+                    "Ten", 
+                    "Jack", 
+                    "Queen", 
+                    "King"
+                ];
                 return CardViewModel;
             })();
             UI.CardViewModel = CardViewModel;            

@@ -4,6 +4,9 @@
 module Bdm.Estimations.UI {
 
     export class CardViewModel {
+        private static suitNames = ["Hearts", "Diamonds", "Clubs", "Spades"];
+        private static rankNames = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"];
+
         friendlyName: KnockoutComputed;
 
         constructor(public suit: Bdm.Estimations.Suit, public rank: Bdm.Estimations.Rank) {
