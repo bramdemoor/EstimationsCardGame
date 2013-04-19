@@ -6,6 +6,8 @@ module Bdm.Estimations {
         static Clubs: Suit = new Suit("Clubs", 3);
         static Spades: Suit = new Suit("Spades", 4);
 
+        static All: Suit[] = [Suit.Hearts, Suit.Diamonds, Suit.Clubs, Suit.Spades];
+
         constructor(public name: string, public value: number) {}
     }
 
@@ -25,6 +27,8 @@ module Bdm.Estimations {
         static Queen: Rank = new Rank("Queen", 12);
         static King: Rank = new Rank("King", 13);
 
+        static All: Rank[] = [Rank.Ace, Rank.Two, Rank.Three, Rank.Four, Rank.Five, Rank.Six, Rank.Seven, Rank.Eight, Rank.Nine, Rank.Ten, Rank.Jack, Rank.Queen, Rank.King];
+
         constructor(public name: string, public value: number) {}
     }
 
@@ -34,11 +38,25 @@ module Bdm.Estimations {
         toString() { return this.rank.name + ' of ' + this.suit.name; }
     }
 
+    class Deck {
+        cards: Card[] = new Card[]();
+
+        constructor() {
+            for(var n = 0; n<13; n++) {
+                this.cards.push(new Card(Suit.All[0], Rank.All[n]));
+                this.cards.push(new Card(Suit.All[1], Rank.All[n]));
+                this.cards.push(new Card(Suit.All[2], Rank.All[n]));
+                this.cards.push(new Card(Suit.All[3], Rank.All[n]));
+            }
+        }
+
+    }
+
     export class Game {
         constructor() {
-            var myCard = new Card(Suit.Clubs, Rank.King);
+            var myDeck = new Deck();
 
-            console.log('Card: ' + myCard.toString());
+            console.log(myDeck.cards);
         }
     }
 }

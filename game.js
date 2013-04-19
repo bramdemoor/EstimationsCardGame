@@ -10,6 +10,12 @@ var Bdm;
             Suit.Diamonds = new Suit("Diamonds", 2);
             Suit.Clubs = new Suit("Clubs", 3);
             Suit.Spades = new Suit("Spades", 4);
+            Suit.All = [
+                Suit.Hearts, 
+                Suit.Diamonds, 
+                Suit.Clubs, 
+                Suit.Spades
+            ];
             return Suit;
         })();        
         var Rank = (function () {
@@ -30,6 +36,21 @@ var Bdm;
             Rank.Jack = new Rank("Jack", 11);
             Rank.Queen = new Rank("Queen", 12);
             Rank.King = new Rank("King", 13);
+            Rank.All = [
+                Rank.Ace, 
+                Rank.Two, 
+                Rank.Three, 
+                Rank.Four, 
+                Rank.Five, 
+                Rank.Six, 
+                Rank.Seven, 
+                Rank.Eight, 
+                Rank.Nine, 
+                Rank.Ten, 
+                Rank.Jack, 
+                Rank.Queen, 
+                Rank.King
+            ];
             return Rank;
         })();        
         var Card = (function () {
@@ -42,10 +63,22 @@ var Bdm;
             };
             return Card;
         })();        
+        var Deck = (function () {
+            function Deck() {
+                this.cards = new Array();
+                for(var n = 0; n < 13; n++) {
+                    this.cards.push(new Card(Suit.All[0], Rank.All[n]));
+                    this.cards.push(new Card(Suit.All[1], Rank.All[n]));
+                    this.cards.push(new Card(Suit.All[2], Rank.All[n]));
+                    this.cards.push(new Card(Suit.All[3], Rank.All[n]));
+                }
+            }
+            return Deck;
+        })();        
         var Game = (function () {
             function Game() {
-                var myCard = new Card(Suit.Clubs, Rank.King);
-                console.log('Card: ' + myCard.toString());
+                var myDeck = new Deck();
+                console.log(myDeck.cards);
             }
             return Game;
         })();
