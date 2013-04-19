@@ -143,32 +143,39 @@ var Bdm;
         })();        
         var Game = (function () {
             function Game() {
-                var myDeck = new Deck();
-                this.stack = new CurrentStack();
-                var playing = true;
-                var currentPlayerIndex = 0;
-                var estimates = [];
+                console.log('game start');
                 var players = [
                     new Player("Bram", this), 
                     new Player("Player2", this), 
                     new Player("Player3", this), 
                     new Player("Player4", this)
                 ];
-                myDeck.dealTo(players);
-                players.forEach(function (p) {
-                    estimates.push(p.getEstimate());
-                });
-                while(playing) {
-                    var player = players[currentPlayerIndex++ % players.length];
-                    if(!player.hasCards()) {
-                        playing = false;
-                        break;
+                var roundCounter = 0;
+                var roundsLeft = true;
+                while(roundsLeft) {
+                    console.log('Dealing for round ' + (roundCounter + 1));
+                    var myDeck = new Deck();
+                    this.stack = new CurrentStack();
+                    var playing = true;
+                    var currentPlayerIndex = 0;
+                    var estimates = [];
+                    myDeck.dealTo(players);
+                    players.forEach(function (p) {
+                        estimates.push(p.getEstimate());
+                    });
+                    while(playing) {
+                        var player = players[currentPlayerIndex++ % players.length];
+                        if(!player.hasCards()) {
+                            playing = false;
+                            break;
+                        }
+                        if(this.stack.isFull()) {
+                            var highest = this.stack.finalize();
+                            console.log('highest card was from ' + highest);
+                        }
+                        player.doTurn();
                     }
-                    if(this.stack.isFull()) {
-                        var highest = this.stack.finalize();
-                        console.log('highest card was from ' + highest);
-                    }
-                    player.doTurn();
+                    roundsLeft = false;
                 }
             }
             return Game;

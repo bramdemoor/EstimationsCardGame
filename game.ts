@@ -105,37 +105,48 @@ module Bdm.Estimations {
         stack: CurrentStack;
 
         constructor() {
-            var myDeck = new Deck();
+            console.log('game start');
 
-            this.stack = new CurrentStack();
-
-            var playing = true;
-            var currentPlayerIndex = 0;
-
-            //var trump = Suit.Spades;
-
-            var estimates = [];
             var players = [ new Player("Bram", this), new Player("Player2", this), new Player("Player3", this), new Player("Player4", this) ];
 
-            myDeck.dealTo(players);
+            var roundCounter = 0;
+            var roundsLeft = true;
 
-            players.forEach((p: Player) => { estimates.push(p.getEstimate()); } );
+            while(roundsLeft) {
+                console.log('Dealing for round ' + (roundCounter + 1));
 
-            while(playing) {
+                var myDeck = new Deck();
 
-                var player = players[currentPlayerIndex++ % players.length];
+                this.stack = new CurrentStack();
 
-                if(!player.hasCards()) {
-                    playing = false;
-                    break;
+                var playing = true;
+                var currentPlayerIndex = 0;
+
+                var estimates = [];
+
+
+                myDeck.dealTo(players);
+
+                players.forEach((p: Player) => { estimates.push(p.getEstimate()); } );
+
+                while(playing) {
+
+                    var player = players[currentPlayerIndex++ % players.length];
+
+                    if(!player.hasCards()) {
+                        playing = false;
+                        break;
+                    }
+
+                    if(this.stack.isFull()) {
+                        var highest = this.stack.finalize();
+                        console.log('highest card was from ' + highest);
+                    }
+
+                    player.doTurn();
                 }
 
-                if(this.stack.isFull()) {
-                    var highest = this.stack.finalize();
-                    console.log('highest card was from ' + highest);
-                }
-
-                player.doTurn();
+                roundsLeft = false;
             }
         }
     }
