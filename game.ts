@@ -6,6 +6,10 @@ module Bdm.Estimations {
         putCard(player: Player, card: Card) {
             this.cards.push(card);
         }
+
+        sort() {
+            this.cards.sort(Card.compare);
+        }
     }
 
     class Player {
@@ -58,6 +62,12 @@ module Bdm.Estimations {
         constructor(public suit: Suit, public rank: Rank) {}
 
         toString() { return this.rank.name + ' of ' + this.suit.name; }
+
+        getValueHash() { return this.suit.value * 10 + this.rank.value; }
+
+        static compare(a: Card, b: Card) { return a.getValueHash() - b.getValueHash(); }
+
+        //function(a,b) { return parseFloat(a.price) - parseFloat(b.price) }
     }
 
     class Deck {
@@ -97,7 +107,7 @@ module Bdm.Estimations {
             var playing = true;
             var currentPlayerIndex = 0;
 
-            var trump = Suit.Spades;
+            //var trump = Suit.Spades;
 
             var estimates = [];
             var players = [ new Player("Bram", this), new Player("Player2", this), new Player("Player3", this), new Player("Player4", this) ];
@@ -116,6 +126,7 @@ module Bdm.Estimations {
                 }
 
                 if(this.stack.cards.length == 4) {
+                    this.stack.sort();
                     this.stack.cards = [];
                     console.log('stack was full');
                 }

@@ -8,6 +8,9 @@ var Bdm;
             CurrentStack.prototype.putCard = function (player, card) {
                 this.cards.push(card);
             };
+            CurrentStack.prototype.sort = function () {
+                this.cards.sort(Card.compare);
+            };
             return CurrentStack;
         })();        
         var Player = (function () {
@@ -93,6 +96,12 @@ var Bdm;
             Card.prototype.toString = function () {
                 return this.rank.name + ' of ' + this.suit.name;
             };
+            Card.prototype.getValueHash = function () {
+                return this.suit.value * 10 + this.rank.value;
+            };
+            Card.compare = function compare(a, b) {
+                return a.getValueHash() - b.getValueHash();
+            };
             return Card;
         })();        
         var Deck = (function () {
@@ -124,7 +133,6 @@ var Bdm;
                 this.stack = new CurrentStack();
                 var playing = true;
                 var currentPlayerIndex = 0;
-                var trump = Suit.Spades;
                 var estimates = [];
                 var players = [
                     new Player("Bram", this), 
@@ -143,6 +151,7 @@ var Bdm;
                         break;
                     }
                     if(this.stack.cards.length == 4) {
+                        this.stack.sort();
                         this.stack.cards = [];
                         console.log('stack was full');
                     }
