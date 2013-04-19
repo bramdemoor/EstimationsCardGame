@@ -2,8 +2,20 @@ var Bdm;
 (function (Bdm) {
     (function (Estimations) {
         (function (UI) {
+            var CardViewModel = (function () {
+                function CardViewModel(suit, rank) {
+                    this.suit = suit;
+                    this.rank = rank;
+                    this.friendlyName = ko.computed(function () {
+                        return rank.name + ' of ' + suit.name;
+                    });
+                }
+                return CardViewModel;
+            })();
+            UI.CardViewModel = CardViewModel;            
             var GamePage = (function () {
                 function GamePage() {
+                    this.someCard = new CardViewModel(Estimations.Suit.Hearts, Estimations.Rank.Ace);
                 }
                 GamePage.prototype.startGame = function () {
                     this.game = new Estimations.Game();

@@ -1,6 +1,6 @@
 module Bdm.Estimations {
 
-    class CurrentStack {
+    export class CurrentStack {
         turns: any[] = new any[];
 
         putCard(player: Player, card: Card) { this.turns.push({ player : player, card : card}); }
@@ -17,7 +17,7 @@ module Bdm.Estimations {
         }
     }
 
-    class Player {
+    export class Player {
         hand: Card[] = new Card[];
 
         constructor(public name: string, private game: Game) {}
@@ -31,7 +31,7 @@ module Bdm.Estimations {
         hasCards() { return this.hand.length > 0; }
     }
 
-    class Suit {
+    export class Suit {
         static Hearts: Suit = new Suit("Hearts", 1);
         static Diamonds: Suit = new Suit("Diamonds", 2);
         static Clubs: Suit = new Suit("Clubs", 3);
@@ -42,7 +42,7 @@ module Bdm.Estimations {
         constructor(public name: string, public value: number) {}
     }
 
-    class Rank {
+    export class Rank {
 
         static Ace: Rank = new Rank("Ace", 1);
         static Two: Rank = new Rank("Two", 2);
@@ -63,7 +63,7 @@ module Bdm.Estimations {
         constructor(public name: string, public value: number) {}
     }
 
-    class Card {
+    export class Card {
         constructor(public suit: Suit, public rank: Rank) {}
 
         toString() { return this.rank.name + ' of ' + this.suit.name; }
@@ -75,7 +75,7 @@ module Bdm.Estimations {
         //function(a,b) { return parseFloat(a.price) - parseFloat(b.price) }
     }
 
-    class Deck {
+    export class Deck {
         cards: Card[] = new Card[]();
 
         constructor(cardsToRemoveCount: number = 0) {

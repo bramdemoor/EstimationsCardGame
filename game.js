@@ -26,7 +26,8 @@ var Bdm;
                 return obj;
             };
             return CurrentStack;
-        })();        
+        })();
+        Estimations.CurrentStack = CurrentStack;        
         var Player = (function () {
             function Player(name, game) {
                 this.name = name;
@@ -49,7 +50,8 @@ var Bdm;
                 return this.hand.length > 0;
             };
             return Player;
-        })();        
+        })();
+        Estimations.Player = Player;        
         var Suit = (function () {
             function Suit(name, value) {
                 this.name = name;
@@ -66,7 +68,8 @@ var Bdm;
                 Suit.Spades
             ];
             return Suit;
-        })();        
+        })();
+        Estimations.Suit = Suit;        
         var Rank = (function () {
             function Rank(name, value) {
                 this.name = name;
@@ -101,7 +104,8 @@ var Bdm;
                 Rank.King
             ];
             return Rank;
-        })();        
+        })();
+        Estimations.Rank = Rank;        
         var Card = (function () {
             function Card(suit, rank) {
                 this.suit = suit;
@@ -117,7 +121,8 @@ var Bdm;
                 return a.getValueHash() - b.getValueHash();
             };
             return Card;
-        })();        
+        })();
+        Estimations.Card = Card;        
         var Deck = (function () {
             function Deck(cardsToRemoveCount) {
                 if (typeof cardsToRemoveCount === "undefined") { cardsToRemoveCount = 0; }
@@ -142,7 +147,8 @@ var Bdm;
                 }
             };
             return Deck;
-        })();        
+        })();
+        Estimations.Deck = Deck;        
         var Game = (function () {
             function Game() {
                 console.log('game start');
