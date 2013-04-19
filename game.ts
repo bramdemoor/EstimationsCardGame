@@ -43,6 +43,8 @@ module Bdm.Estimations {
     }
 
     export class Deck {
+        static MAX_CARDS: number = 52;
+
         cards: Card[] = new Card[]();
 
         constructor(cardsToRemoveCount: number = 0) {
@@ -65,19 +67,20 @@ module Bdm.Estimations {
 
     export class Game {
         stack: CurrentStack;
+        players: Player[];
 
         constructor() {
-            var players = [ new Player("Bram", this), new Player("Player2", this), new Player("Player3", this), new Player("Player4", this) ];
+            this.players = [ new Player("Bram", this), new Player("Player2", this), new Player("Player3", this), new Player("Player4", this) ];
 
             var roundCounter = 0;
             var roundsLeft = true;
 
             while(roundsLeft) {
-                console.log('Dealing for roundje ' + (roundCounter + 1));
+                var displayRound = roundCounter + 1;
 
-                var cardsToRemoveCount = roundCounter++ * players.length;
+                var cardsToRemoveCount = roundCounter++ * this.players.length;
 
-                if(cardsToRemoveCount >= 52) {
+                if(cardsToRemoveCount >= Deck.MAX_CARDS) {
                     roundsLeft = false;
                     break;
                 }
@@ -91,18 +94,15 @@ module Bdm.Estimations {
 
                 var estimates = [];
 
-                myDeck.dealTo(players);
+                myDeck.dealTo(this.players);
 
-                players.forEach((p: Player) => { estimates.push(p.getEstimate()); } );
+                this.players.forEach((p: Player) => { estimates.push(p.getEstimate()); } );
 
                 while(playing) {
 
-                    var player = players[currentPlayerIndex++ % players.length];
+                    var player = this.players[currentPlayerIndex++ % this.players.length];
 
-                    if(!player.hasCards()) {
-                        playing = false;
-                        break;
-                    }
+                    if(!player.hasCards()) { playing = false; break; }
 
                     if(this.stack.isFull()) {
                         var highest = this.stack.finalize();

@@ -3,6 +3,14 @@
 
 module Bdm.Estimations.UI {
 
+    export class PlayerViewModel {
+        name: KnockoutObservableString;
+
+        constructor(player: Bdm.Estimations.Player) {
+            this.name = ko.observable(player.name);
+        }
+    }
+
     export class CardViewModel {
         private suitNames = ["Hearts", "Diamonds", "Clubs", "Spades"];
         private rankNames = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"];
@@ -20,6 +28,8 @@ module Bdm.Estimations.UI {
     export class GamePage {
         game: Bdm.Estimations.Game;
 
+        players: KnockoutObservableArray;
+
         someCard: CardViewModel = new CardViewModel(Suits.Hearts, Ranks.Ace);
 
         constructor() {
@@ -29,7 +39,10 @@ module Bdm.Estimations.UI {
         startGame() {
             this.game = new Game();
 
+            this.players = ko.observableArray(ko.utils.arrayMap(this.game.players, (p: Bdm.Estimations.Player) => { return new PlayerViewModel(p); }));
+
             ko.applyBindings(this);
+
         }
 
         nextTurn() {

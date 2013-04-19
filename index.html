@@ -22,12 +22,16 @@
 
         <div>
             <h2>Players</h2>
-            <div>
-                <h3>A player</h3>
-                <ul>
-                    <li>A card</li>
-                </ul>
+            <div data-bind="foreach: players">
+                <div>
+                    <h3 data-bind="text: name"></h3>
+                    <ul>
+                        <li>A card</li>
+                    </ul>
+                </div>
             </div>
+
+
         </div>
 
     <script type="text/javascript">

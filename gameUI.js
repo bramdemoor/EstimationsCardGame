@@ -2,6 +2,13 @@ var Bdm;
 (function (Bdm) {
     (function (Estimations) {
         (function (UI) {
+            var PlayerViewModel = (function () {
+                function PlayerViewModel(player) {
+                    this.name = ko.observable(player.name);
+                }
+                return PlayerViewModel;
+            })();
+            UI.PlayerViewModel = PlayerViewModel;            
             var CardViewModel = (function () {
                 function CardViewModel(suit, rank) {
                     this.suit = suit;
@@ -41,6 +48,9 @@ var Bdm;
                 }
                 GamePage.prototype.startGame = function () {
                     this.game = new Estimations.Game();
+                    this.players = ko.observableArray(ko.utils.arrayMap(this.game.players, function (p) {
+                        return new PlayerViewModel(p);
+                    }));
                     ko.applyBindings(this);
                 };
                 GamePage.prototype.nextTurn = function () {

@@ -118,6 +118,7 @@ var Bdm;
                 this.shuffle();
                 this.cards.splice(0, cardsToRemoveCount);
             }
+            Deck.MAX_CARDS = 52;
             Deck.prototype.shuffle = function () {
                 for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i) , x = this.cards[--i] , this.cards[i] = this.cards[j] , this.cards[j] = x) {
                 }
@@ -133,7 +134,7 @@ var Bdm;
         Estimations.Deck = Deck;        
         var Game = (function () {
             function Game() {
-                var players = [
+                this.players = [
                     new Player("Bram", this), 
                     new Player("Player2", this), 
                     new Player("Player3", this), 
@@ -142,9 +143,9 @@ var Bdm;
                 var roundCounter = 0;
                 var roundsLeft = true;
                 while(roundsLeft) {
-                    console.log('Dealing for roundje ' + (roundCounter + 1));
-                    var cardsToRemoveCount = roundCounter++ * players.length;
-                    if(cardsToRemoveCount >= 52) {
+                    var displayRound = roundCounter + 1;
+                    var cardsToRemoveCount = roundCounter++ * this.players.length;
+                    if(cardsToRemoveCount >= Deck.MAX_CARDS) {
                         roundsLeft = false;
                         break;
                     }
@@ -153,12 +154,12 @@ var Bdm;
                     var playing = true;
                     var currentPlayerIndex = 0;
                     var estimates = [];
-                    myDeck.dealTo(players);
-                    players.forEach(function (p) {
+                    myDeck.dealTo(this.players);
+                    this.players.forEach(function (p) {
                         estimates.push(p.getEstimate());
                     });
                     while(playing) {
-                        var player = players[currentPlayerIndex++ % players.length];
+                        var player = this.players[currentPlayerIndex++ % this.players.length];
                         if(!player.hasCards()) {
                             playing = false;
                             break;
