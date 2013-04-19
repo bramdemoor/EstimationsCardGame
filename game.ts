@@ -1,14 +1,19 @@
 module Bdm.Estimations {
 
     class CurrentStack {
-        cards: Card[] = new Card[];
+        turns: any[] = new any[];
 
-        putCard(player: Player, card: Card) {
-            this.cards.push(card);
-        }
+        putCard(player: Player, card: Card) { this.turns.push({ player : player, card : card}); }
 
-        sort() {
-            this.cards.sort(Card.compare);
+        private sort() { this.turns.sort((a,b) => { return Card.compare(a.card, b.card); }); }
+
+        isFull() { return this.turns.length == 4; }
+
+        finalize() {
+            this.sort();
+            var obj = this.turns[3].player.name;
+            this.turns = [];
+            return obj;
         }
     }
 
@@ -125,10 +130,9 @@ module Bdm.Estimations {
                     break;
                 }
 
-                if(this.stack.cards.length == 4) {
-                    this.stack.sort();
-                    this.stack.cards = [];
-                    console.log('stack was full');
+                if(this.stack.isFull()) {
+                    var highest = this.stack.finalize();
+                    console.log('highest card was from ' + highest);
                 }
 
                 player.doTurn();

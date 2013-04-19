@@ -3,13 +3,27 @@ var Bdm;
     (function (Estimations) {
         var CurrentStack = (function () {
             function CurrentStack() {
-                this.cards = new Array();
+                this.turns = new Array();
             }
             CurrentStack.prototype.putCard = function (player, card) {
-                this.cards.push(card);
+                this.turns.push({
+                    player: player,
+                    card: card
+                });
             };
             CurrentStack.prototype.sort = function () {
-                this.cards.sort(Card.compare);
+                this.turns.sort(function (a, b) {
+                    return Card.compare(a.card, b.card);
+                });
+            };
+            CurrentStack.prototype.isFull = function () {
+                return this.turns.length == 4;
+            };
+            CurrentStack.prototype.finalize = function () {
+                this.sort();
+                var obj = this.turns[3].player.name;
+                this.turns = [];
+                return obj;
             };
             return CurrentStack;
         })();        
@@ -150,10 +164,9 @@ var Bdm;
                         playing = false;
                         break;
                     }
-                    if(this.stack.cards.length == 4) {
-                        this.stack.sort();
-                        this.stack.cards = [];
-                        console.log('stack was full');
+                    if(this.stack.isFull()) {
+                        var highest = this.stack.finalize();
+                        console.log('highest card was from ' + highest);
                     }
                     player.doTurn();
                 }
