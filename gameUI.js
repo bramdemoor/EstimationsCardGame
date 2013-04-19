@@ -6,37 +6,38 @@ var Bdm;
                 function CardViewModel(suit, rank) {
                     this.suit = suit;
                     this.rank = rank;
+                    var _this = this;
+                    this.suitNames = [
+                        "Hearts", 
+                        "Diamonds", 
+                        "Clubs", 
+                        "Spades"
+                    ];
+                    this.rankNames = [
+                        "Ace", 
+                        "Two", 
+                        "Three", 
+                        "Four", 
+                        "Five", 
+                        "Six", 
+                        "Seven", 
+                        "Eight", 
+                        "Nine", 
+                        "Ten", 
+                        "Jack", 
+                        "Queen", 
+                        "King"
+                    ];
                     this.friendlyName = ko.computed(function () {
-                        return rank.name + ' of ' + suit.name;
+                        return _this.rankNames[rank - 1] + ' of ' + _this.suitNames[suit - 1];
                     });
                 }
-                CardViewModel.suitNames = [
-                    "Hearts", 
-                    "Diamonds", 
-                    "Clubs", 
-                    "Spades"
-                ];
-                CardViewModel.rankNames = [
-                    "Ace", 
-                    "Two", 
-                    "Three", 
-                    "Four", 
-                    "Five", 
-                    "Six", 
-                    "Seven", 
-                    "Eight", 
-                    "Nine", 
-                    "Ten", 
-                    "Jack", 
-                    "Queen", 
-                    "King"
-                ];
                 return CardViewModel;
             })();
             UI.CardViewModel = CardViewModel;            
             var GamePage = (function () {
                 function GamePage() {
-                    this.someCard = new CardViewModel(Estimations.Suit.Hearts, Estimations.Rank.Ace);
+                    this.someCard = new CardViewModel(Estimations.Suits.Hearts, Estimations.Ranks.Ace);
                 }
                 GamePage.prototype.startGame = function () {
                     this.game = new Estimations.Game();

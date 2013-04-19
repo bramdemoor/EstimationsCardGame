@@ -52,70 +52,53 @@ var Bdm;
             return Player;
         })();
         Estimations.Player = Player;        
-        var Suit = (function () {
-            function Suit(name, value) {
-                this.name = name;
-                this.value = value;
-            }
-            Suit.Hearts = new Suit("Hearts", 1);
-            Suit.Diamonds = new Suit("Diamonds", 2);
-            Suit.Clubs = new Suit("Clubs", 3);
-            Suit.Spades = new Suit("Spades", 4);
-            Suit.All = [
-                Suit.Hearts, 
-                Suit.Diamonds, 
-                Suit.Clubs, 
-                Suit.Spades
-            ];
-            return Suit;
-        })();
-        Estimations.Suit = Suit;        
-        var Rank = (function () {
-            function Rank(name, value) {
-                this.name = name;
-                this.value = value;
-            }
-            Rank.Ace = new Rank("Ace", 1);
-            Rank.Two = new Rank("Two", 2);
-            Rank.Three = new Rank("Three", 3);
-            Rank.Four = new Rank("Four", 4);
-            Rank.Five = new Rank("Five", 5);
-            Rank.Six = new Rank("Six", 6);
-            Rank.Seven = new Rank("Seven", 7);
-            Rank.Eight = new Rank("Eight", 8);
-            Rank.Nine = new Rank("Nine", 9);
-            Rank.Ten = new Rank("Ten", 10);
-            Rank.Jack = new Rank("Jack", 11);
-            Rank.Queen = new Rank("Queen", 12);
-            Rank.King = new Rank("King", 13);
-            Rank.All = [
-                Rank.Ace, 
-                Rank.Two, 
-                Rank.Three, 
-                Rank.Four, 
-                Rank.Five, 
-                Rank.Six, 
-                Rank.Seven, 
-                Rank.Eight, 
-                Rank.Nine, 
-                Rank.Ten, 
-                Rank.Jack, 
-                Rank.Queen, 
-                Rank.King
-            ];
-            return Rank;
-        })();
-        Estimations.Rank = Rank;        
+        (function (Suits) {
+            Suits._map = [];
+            Suits.Hearts = 1;
+            Suits._map[2] = "Diamonds";
+            Suits.Diamonds = 2;
+            Suits._map[3] = "Clubs";
+            Suits.Clubs = 3;
+            Suits._map[4] = "Spades";
+            Suits.Spades = 4;
+        })(Estimations.Suits || (Estimations.Suits = {}));
+        var Suits = Estimations.Suits;
+        (function (Ranks) {
+            Ranks._map = [];
+            Ranks.Ace = 1;
+            Ranks._map[2] = "Two";
+            Ranks.Two = 2;
+            Ranks._map[3] = "Three";
+            Ranks.Three = 3;
+            Ranks._map[4] = "Four";
+            Ranks.Four = 4;
+            Ranks._map[5] = "Five";
+            Ranks.Five = 5;
+            Ranks._map[6] = "Six";
+            Ranks.Six = 6;
+            Ranks._map[7] = "Seven";
+            Ranks.Seven = 7;
+            Ranks._map[8] = "Eight";
+            Ranks.Eight = 8;
+            Ranks._map[9] = "Nine";
+            Ranks.Nine = 9;
+            Ranks._map[10] = "Ten";
+            Ranks.Ten = 10;
+            Ranks._map[11] = "Jack";
+            Ranks.Jack = 11;
+            Ranks._map[12] = "Queen";
+            Ranks.Queen = 12;
+            Ranks._map[13] = "King";
+            Ranks.King = 13;
+        })(Estimations.Ranks || (Estimations.Ranks = {}));
+        var Ranks = Estimations.Ranks;
         var Card = (function () {
             function Card(suit, rank) {
                 this.suit = suit;
                 this.rank = rank;
             }
-            Card.prototype.toString = function () {
-                return this.rank.name + ' of ' + this.suit.name;
-            };
             Card.prototype.getValueHash = function () {
-                return this.suit.value * 10 + this.rank.value;
+                return this.suit * 10 + this.rank;
             };
             Card.compare = function compare(a, b) {
                 return a.getValueHash() - b.getValueHash();
@@ -128,10 +111,9 @@ var Bdm;
                 if (typeof cardsToRemoveCount === "undefined") { cardsToRemoveCount = 0; }
                 this.cards = new Array();
                 for(var n = 0; n < 13; n++) {
-                    this.cards.push(new Card(Suit.All[0], Rank.All[n]));
-                    this.cards.push(new Card(Suit.All[1], Rank.All[n]));
-                    this.cards.push(new Card(Suit.All[2], Rank.All[n]));
-                    this.cards.push(new Card(Suit.All[3], Rank.All[n]));
+                    for(var s = 0; s < 4; s++) {
+                        this.cards.push(new Card(n + 1, s + 1));
+                    }
                 }
                 this.shuffle();
                 this.cards.splice(0, cardsToRemoveCount);
@@ -151,7 +133,6 @@ var Bdm;
         Estimations.Deck = Deck;        
         var Game = (function () {
             function Game() {
-                console.log('game start');
                 var players = [
                     new Player("Bram", this), 
                     new Player("Player2", this), 
@@ -161,7 +142,7 @@ var Bdm;
                 var roundCounter = 0;
                 var roundsLeft = true;
                 while(roundsLeft) {
-                    console.log('Dealing for round ' + (roundCounter + 1));
+                    console.log('Dealing for roundje ' + (roundCounter + 1));
                     var cardsToRemoveCount = roundCounter++ * players.length;
                     if(cardsToRemoveCount >= 52) {
                         roundsLeft = false;

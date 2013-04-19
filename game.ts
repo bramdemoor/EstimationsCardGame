@@ -31,63 +31,23 @@ module Bdm.Estimations {
         hasCards() { return this.hand.length > 0; }
     }
 
-    export class Suit {
-        static Hearts: Suit = new Suit("Hearts", 1);
-        static Diamonds: Suit = new Suit("Diamonds", 2);
-        static Clubs: Suit = new Suit("Clubs", 3);
-        static Spades: Suit = new Suit("Spades", 4);
-
-        static All: Suit[] = [Suit.Hearts, Suit.Diamonds, Suit.Clubs, Suit.Spades];
-
-        constructor(public name: string, public value: number) {}
-    }
-
-    export class Rank {
-
-        static Ace: Rank = new Rank("Ace", 1);
-        static Two: Rank = new Rank("Two", 2);
-        static Three: Rank = new Rank("Three", 3);
-        static Four: Rank = new Rank("Four", 4);
-        static Five: Rank = new Rank("Five", 5);
-        static Six: Rank = new Rank("Six", 6);
-        static Seven: Rank = new Rank("Seven", 7);
-        static Eight: Rank = new Rank("Eight", 8);
-        static Nine: Rank = new Rank("Nine", 9);
-        static Ten: Rank = new Rank("Ten", 10);
-        static Jack: Rank = new Rank("Jack", 11);
-        static Queen: Rank = new Rank("Queen", 12);
-        static King: Rank = new Rank("King", 13);
-
-        static All: Rank[] = [Rank.Ace, Rank.Two, Rank.Three, Rank.Four, Rank.Five, Rank.Six, Rank.Seven, Rank.Eight, Rank.Nine, Rank.Ten, Rank.Jack, Rank.Queen, Rank.King];
-
-        constructor(public name: string, public value: number) {}
-    }
+    export enum Suits { Hearts = 1, Diamonds, Clubs, Spades }
+    export enum Ranks { Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King }
 
     export class Card {
-        constructor(public suit: Suit, public rank: Rank) {}
+        constructor(public suit: Suits, public rank: Ranks) {}
 
-        toString() { return this.rank.name + ' of ' + this.suit.name; }
-
-        getValueHash() { return this.suit.value * 10 + this.rank.value; }
+        getValueHash() { return this.suit * 10 + this.rank; }
 
         static compare(a: Card, b: Card) { return a.getValueHash() - b.getValueHash(); }
-
-        //function(a,b) { return parseFloat(a.price) - parseFloat(b.price) }
     }
 
     export class Deck {
         cards: Card[] = new Card[]();
 
         constructor(cardsToRemoveCount: number = 0) {
-            for(var n = 0; n<13; n++) {
-                this.cards.push(new Card(Suit.All[0], Rank.All[n]));
-                this.cards.push(new Card(Suit.All[1], Rank.All[n]));
-                this.cards.push(new Card(Suit.All[2], Rank.All[n]));
-                this.cards.push(new Card(Suit.All[3], Rank.All[n]));
-            }
-
+            for(var n = 0; n<13; n++) for(var s=0; s<4; s++) this.cards.push(new Card(n+1, s+1));
             this.shuffle();
-
             this.cards.splice(0, cardsToRemoveCount);
         }
 
@@ -107,15 +67,13 @@ module Bdm.Estimations {
         stack: CurrentStack;
 
         constructor() {
-            console.log('game start');
-
             var players = [ new Player("Bram", this), new Player("Player2", this), new Player("Player3", this), new Player("Player4", this) ];
 
             var roundCounter = 0;
             var roundsLeft = true;
 
             while(roundsLeft) {
-                console.log('Dealing for round ' + (roundCounter + 1));
+                console.log('Dealing for roundje ' + (roundCounter + 1));
 
                 var cardsToRemoveCount = roundCounter++ * players.length;
 
