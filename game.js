@@ -9,6 +9,12 @@ var Bdm;
             Player.prototype.giveCard = function (card) {
                 this.hand.push(card);
             };
+            Player.prototype.getEstimate = function () {
+                return {
+                    name: name,
+                    estimate: Math.floor(this.hand.length / 4)
+                };
+            };
             return Player;
         })();        
         var Suit = (function () {
@@ -99,6 +105,7 @@ var Bdm;
             function Game() {
                 var myDeck = new Deck();
                 myDeck.shuffle();
+                var estimates = [];
                 var players = [
                     new Player("Bram"), 
                     new Player("Player2"), 
@@ -106,7 +113,10 @@ var Bdm;
                     new Player("Player4")
                 ];
                 myDeck.dealTo(players);
-                console.log(players);
+                players.forEach(function (p) {
+                    estimates.push(p.getEstimate());
+                });
+                console.log(estimates);
             }
             return Game;
         })();

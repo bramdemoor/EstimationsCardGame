@@ -6,6 +6,8 @@ module Bdm.Estimations {
         constructor(public name: string) {}
 
         giveCard(card: Card) { this.hand.push(card); }
+
+        getEstimate() { return { name: name, estimate: Math.floor(this.hand.length / 4) }; }
     }
 
     class Suit {
@@ -75,6 +77,8 @@ module Bdm.Estimations {
             var myDeck = new Deck();
             myDeck.shuffle();
 
+            var estimates = [];
+
             var players = [
                 new Player("Bram"),
                 new Player("Player2"),
@@ -84,7 +88,9 @@ module Bdm.Estimations {
 
             myDeck.dealTo(players);
 
-            console.log(players);
+            players.forEach((p: Player) => { estimates.push(p.getEstimate()); } )
+
+            console.log(estimates);
         }
     }
 }
