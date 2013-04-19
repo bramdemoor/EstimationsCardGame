@@ -3,7 +3,11 @@ var Bdm;
     (function (Estimations) {
         (function (UI) {
             var GamePage = (function () {
-                function GamePage() { }
+                function GamePage() {
+                }
+                GamePage.prototype.startGame = function () {
+                    this.game = new Estimations.Game();
+                };
                 return GamePage;
             })();
             UI.GamePage = GamePage;            
