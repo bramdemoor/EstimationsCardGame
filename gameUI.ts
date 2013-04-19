@@ -3,7 +3,6 @@
 
 module Bdm.Estimations.UI {
 
-
     export class CardViewModel {
         private suitNames = ["Hearts", "Diamonds", "Clubs", "Spades"];
         private rankNames = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"];
@@ -11,10 +10,9 @@ module Bdm.Estimations.UI {
         friendlyName: KnockoutComputed;
 
         constructor(public suit: Bdm.Estimations.Suits, public rank: Bdm.Estimations.Ranks) {
-
             this.friendlyName = ko.computed(() => {
-                return this.rankNames[rank-1] + ' of ' + this.suitNames[suit-1]; });
-
+                return this.rankNames[rank-1] + ' of ' + this.suitNames[suit-1];
+            });
         }
     }
 
@@ -30,16 +28,11 @@ module Bdm.Estimations.UI {
         }
     }
 
-
     export class GamePage {
         game: Bdm.Estimations.Game;
-
         players: KnockoutObservableArray;
 
-        someCard: CardViewModel = new CardViewModel(Suits.Hearts, Ranks.Ace);
-
         constructor() {
-
         }
 
         startGame() {
@@ -49,6 +42,7 @@ module Bdm.Estimations.UI {
 
             ko.applyBindings(this);
 
+            console.log(this.game);
         }
 
         nextTurn() {

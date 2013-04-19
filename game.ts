@@ -80,17 +80,20 @@ module Bdm.Estimations {
         deck: Deck;
         estimates: Estimate[] = new Estimate[];
         minirounds: MiniRound[] = new MiniRound[];
+        cardsToRemoveCount: number;
 
         constructor(roundNumber: number, private game: Game) {
-            this.deck = new Deck(roundNumber * game.players.length);
+            this.cardsToRemoveCount = roundNumber * game.players.length;
+            this.deck = new Deck(this.cardsToRemoveCount);
         }
 
         play() {
             this.deck.dealTo(this.game.players);
             this.game.players.forEach((p: Player) => { this.estimates.push(p.getEstimate()); } );
 
+            var maxSlagen = Math.floor((Deck.MAX_CARDS - this.cardsToRemoveCount) / this.game.players.length);
             while(true) {
-                if(this.minirounds.length == Math.floor(Deck.MAX_CARDS / this.game.players.length)) break;
+                if(this.minirounds.length == maxSlagen) break;
                 var miniRound = new MiniRound(this.game);
                 miniRound.play();
                 this.minirounds.push(miniRound);

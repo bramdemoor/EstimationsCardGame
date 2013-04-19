@@ -47,7 +47,6 @@ var Bdm;
             UI.PlayerViewModel = PlayerViewModel;            
             var GamePage = (function () {
                 function GamePage() {
-                    this.someCard = new CardViewModel(Estimations.Suits.Hearts, Estimations.Ranks.Ace);
                 }
                 GamePage.prototype.startGame = function () {
                     this.game = new Estimations.Game();
@@ -55,6 +54,7 @@ var Bdm;
                         return new PlayerViewModel(p);
                     }));
                     ko.applyBindings(this);
+                    console.log(this.game);
                 };
                 GamePage.prototype.nextTurn = function () {
                     console.log('next turn.');

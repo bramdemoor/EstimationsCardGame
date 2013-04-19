@@ -143,7 +143,8 @@ var Bdm;
                 this.game = game;
                 this.estimates = new Array();
                 this.minirounds = new Array();
-                this.deck = new Deck(roundNumber * game.players.length);
+                this.cardsToRemoveCount = roundNumber * game.players.length;
+                this.deck = new Deck(this.cardsToRemoveCount);
             }
             Round.prototype.play = function () {
                 var _this = this;
@@ -151,8 +152,9 @@ var Bdm;
                 this.game.players.forEach(function (p) {
                     _this.estimates.push(p.getEstimate());
                 });
+                var maxSlagen = Math.floor((Deck.MAX_CARDS - this.cardsToRemoveCount) / this.game.players.length);
                 while(true) {
-                    if(this.minirounds.length == Math.floor(Deck.MAX_CARDS / this.game.players.length)) {
+                    if(this.minirounds.length == maxSlagen) {
                         break;
                     }
                     var miniRound = new MiniRound(this.game);
