@@ -1,57 +1,6 @@
 var Bdm;
 (function (Bdm) {
     (function (Estimations) {
-        var CurrentStack = (function () {
-            function CurrentStack() {
-                this.turns = new Array();
-            }
-            CurrentStack.prototype.putCard = function (player, card) {
-                this.turns.push({
-                    player: player,
-                    card: card
-                });
-            };
-            CurrentStack.prototype.sort = function () {
-                this.turns.sort(function (a, b) {
-                    return Card.compare(a.card, b.card);
-                });
-            };
-            CurrentStack.prototype.isFull = function () {
-                return this.turns.length == 4;
-            };
-            CurrentStack.prototype.finalize = function () {
-                this.sort();
-                var obj = this.turns[3].player.name;
-                this.turns = [];
-                return obj;
-            };
-            return CurrentStack;
-        })();
-        Estimations.CurrentStack = CurrentStack;        
-        var Player = (function () {
-            function Player(name, game) {
-                this.name = name;
-                this.game = game;
-                this.hand = new Array();
-            }
-            Player.prototype.giveCard = function (card) {
-                this.hand.push(card);
-            };
-            Player.prototype.getEstimate = function () {
-                return {
-                    name: name,
-                    estimate: Math.floor(this.hand.length / 4)
-                };
-            };
-            Player.prototype.doTurn = function () {
-                this.game.currentRound.stack.putCard(this, this.hand.pop());
-            };
-            Player.prototype.hasCards = function () {
-                return this.hand.length > 0;
-            };
-            return Player;
-        })();
-        Estimations.Player = Player;        
         (function (Suits) {
             Suits._map = [];
             Suits.Hearts = 1;
@@ -103,6 +52,24 @@ var Bdm;
             return Card;
         })();
         Estimations.Card = Card;        
+        var Player = (function () {
+            function Player(name, game) {
+                this.name = name;
+                this.game = game;
+                this.hand = new Array();
+            }
+            Player.prototype.giveCard = function (card) {
+                this.hand.push(card);
+            };
+            Player.prototype.getEstimate = function () {
+                return new Estimate(this, Math.floor(this.hand.length / 4));
+            };
+            Player.prototype.takeCardToPut = function () {
+                return this.hand.pop();
+            };
+            return Player;
+        })();
+        Estimations.Player = Player;        
         var Deck = (function () {
             function Deck(cardsToRemoveCount) {
                 if (typeof cardsToRemoveCount === "undefined") { cardsToRemoveCount = 0; }
@@ -129,30 +96,68 @@ var Bdm;
             return Deck;
         })();
         Estimations.Deck = Deck;        
+        var Estimate = (function () {
+            function Estimate(player, estimatedWins) {
+                this.player = player;
+                this.estimatedWins = estimatedWins;
+            }
+            return Estimate;
+        })();
+        Estimations.Estimate = Estimate;        
+        var Turn = (function () {
+            function Turn(player) {
+                this.player = player;
+            }
+            Turn.prototype.play = function () {
+                this.card = this.player.takeCardToPut();
+            };
+            return Turn;
+        })();
+        Estimations.Turn = Turn;        
+        var MiniRound = (function () {
+            function MiniRound(game) {
+                this.game = game;
+                this.turns = new Array();
+            }
+            MiniRound.prototype.play = function () {
+                var currentPlayerIndex = 0;
+                while(true) {
+                    if(this.turns.length == this.game.players.length) {
+                        this.turns.sort(function (a, b) {
+                            return Card.compare(a.card, b.card);
+                        });
+                        console.log('highest card was from ' + this.turns[3].player.name);
+                        break;
+                    } else {
+                        var turn = new Turn(this.game.players[currentPlayerIndex++]);
+                        turn.play();
+                        this.turns.push(turn);
+                    }
+                }
+            };
+            return MiniRound;
+        })();
+        Estimations.MiniRound = MiniRound;        
         var Round = (function () {
             function Round(roundNumber, game) {
                 this.game = game;
                 this.estimates = new Array();
+                this.minirounds = new Array();
                 this.deck = new Deck(roundNumber * game.players.length);
-                this.stack = new CurrentStack();
             }
             Round.prototype.play = function () {
                 var _this = this;
-                var currentPlayerIndex = 0;
                 this.deck.dealTo(this.game.players);
                 this.game.players.forEach(function (p) {
                     _this.estimates.push(p.getEstimate());
                 });
                 while(true) {
-                    var player = this.game.players[currentPlayerIndex++ % this.game.players.length];
-                    if(!player.hasCards()) {
+                    if(this.minirounds.length == Math.floor(Deck.MAX_CARDS / this.game.players.length)) {
                         break;
                     }
-                    if(this.stack.isFull()) {
-                        var highest = this.stack.finalize();
-                        console.log('highest card was from ' + highest);
-                    }
-                    player.doTurn();
+                    var miniRound = new MiniRound(this.game);
+                    miniRound.play();
+                    this.minirounds.push(miniRound);
                 }
             };
             return Round;
@@ -167,9 +172,8 @@ var Bdm;
                     new Player("Player3", this), 
                     new Player("Player4", this)
                 ];
-                var maxRounds = Math.floor(Deck.MAX_CARDS / this.players.length);
                 while(true) {
-                    if(this.rounds.length == maxRounds) {
+                    if(this.rounds.length == Math.floor(Deck.MAX_CARDS / this.players.length)) {
                         break;
                     }
                     this.currentRound = new Round(this.rounds.length + 1, this);

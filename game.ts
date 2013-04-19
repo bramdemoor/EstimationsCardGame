@@ -1,20 +1,12 @@
 module Bdm.Estimations {
 
-    export class CurrentStack {
-        turns: any[] = new any[];
+    export enum Suits { Hearts = 1, Diamonds, Clubs, Spades }
+    export enum Ranks { Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King }
 
-        putCard(player: Player, card: Card) { this.turns.push({ player : player, card : card}); }
+    export class Card {
+        constructor(public suit: Suits, public rank: Ranks) {}
 
-        private sort() { this.turns.sort((a,b) => { return Card.compare(a.card, b.card); }); }
-
-        isFull() { return this.turns.length == 4; }
-
-        finalize() {
-            this.sort();
-            var obj = this.turns[3].player.name;
-            this.turns = [];
-            return obj;
-        }
+        static compare(a: Card, b: Card) { return (a.suit * 10 + a.rank) - (b.suit * 10 + b.rank); }
     }
 
     export class Player {
@@ -23,21 +15,8 @@ module Bdm.Estimations {
         constructor(public name: string, private game: Game) {}
 
         giveCard(card: Card) { this.hand.push(card); }
-
-        getEstimate() { return { name: name, estimate: Math.floor(this.hand.length / 4) }; }
-
-        doTurn() { this.game.currentRound.stack.putCard(this, this.hand.pop()); }
-
-        hasCards() { return this.hand.length > 0; }
-    }
-
-    export enum Suits { Hearts = 1, Diamonds, Clubs, Spades }
-    export enum Ranks { Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King }
-
-    export class Card {
-        constructor(public suit: Suits, public rank: Ranks) {}
-
-        static compare(a: Card, b: Card) { return (a.suit * 10 + a.rank) - (b.suit * 10 + b.rank); }
+        getEstimate(): Estimate { return new Estimate(this, Math.floor(this.hand.length / 4)); }
+        takeCardToPut() { return this.hand.pop(); }
     }
 
     export class Deck {
@@ -61,32 +40,60 @@ module Bdm.Estimations {
         }
     }
 
-    export class Round {
-        stack: CurrentStack;
-        deck: Deck;
-        estimates: any[] = new any[];
+    export class Estimate {
+        constructor(public player: Player, public estimatedWins: number) {}
+    }
 
-        constructor(roundNumber: number, private game: Game) {
-            this.deck = new Deck(roundNumber * game.players.length);
-            this.stack = new CurrentStack();
+    export class Turn {
+        card: Card;
+
+        constructor(public player: Player) { }
+
+        play() {
+            this.card = this.player.takeCardToPut();
         }
+    }
+
+    export class MiniRound {
+        turns: Turn[] = new Turn[];
+
+        constructor(public game: Game) {}
 
         play() {
             var currentPlayerIndex = 0;
+
+            while(true) {
+                if(this.turns.length == this.game.players.length) {
+                    this.turns.sort((a,b) => { return Card.compare(a.card, b.card); });
+                    console.log('highest card was from ' + this.turns[3].player.name);
+                    break;
+                } else {
+                    var turn = new Turn(this.game.players[currentPlayerIndex++]);
+                    turn.play();
+                    this.turns.push(turn);
+                }
+            }
+        }
+    }
+
+    export class Round {
+        deck: Deck;
+        estimates: Estimate[] = new Estimate[];
+        minirounds: MiniRound[] = new MiniRound[];
+
+        constructor(roundNumber: number, private game: Game) {
+            this.deck = new Deck(roundNumber * game.players.length);
+        }
+
+        play() {
             this.deck.dealTo(this.game.players);
             this.game.players.forEach((p: Player) => { this.estimates.push(p.getEstimate()); } );
+
             while(true) {
-
-                var player = this.game.players[currentPlayerIndex++ % this.game.players.length];
-
-                if(!player.hasCards()) { break; }
-
-                if(this.stack.isFull()) {
-                    var highest = this.stack.finalize();
-                    console.log('highest card was from ' + highest);
-                }
-
-                player.doTurn();
+                if(this.minirounds.length == Math.floor(Deck.MAX_CARDS / this.game.players.length)) break;
+                var miniRound = new MiniRound(this.game);
+                miniRound.play();
+                this.minirounds.push(miniRound);
             }
         }
     }
@@ -99,15 +106,10 @@ module Bdm.Estimations {
         constructor() {
             this.players = [ new Player("Bram", this), new Player("Player2", this), new Player("Player3", this), new Player("Player4", this) ];
 
-            var maxRounds = Math.floor(Deck.MAX_CARDS / this.players.length);
-
             while(true) {
-                if(this.rounds.length == maxRounds) break;
-
+                if(this.rounds.length == Math.floor(Deck.MAX_CARDS / this.players.length)) break;
                 this.currentRound = new Round(this.rounds.length + 1, this);
-
                 this.currentRound.play();
-
                 this.rounds.push(this.currentRound);
             }
         }
