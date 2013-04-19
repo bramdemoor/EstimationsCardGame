@@ -73,11 +73,17 @@ var Bdm;
                     this.cards.push(new Card(Suit.All[3], Rank.All[n]));
                 }
             }
+            Deck.prototype.shuffle = function () {
+                for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i) , x = this.cards[--i] , this.cards[i] = this.cards[j] , this.cards[j] = x) {
+                }
+                ;
+            };
             return Deck;
         })();        
         var Game = (function () {
             function Game() {
                 var myDeck = new Deck();
+                myDeck.shuffle();
                 console.log(myDeck.cards);
             }
             return Game;

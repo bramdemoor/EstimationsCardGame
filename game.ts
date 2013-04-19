@@ -50,11 +50,16 @@ module Bdm.Estimations {
             }
         }
 
+        shuffle() {
+            // Array shuffle by  Jonas Raoni Soares Silva | http://jsfromhell.com/array/shuffle [v1.0]
+            for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i), x = this.cards[--i], this.cards[i] = this.cards[j], this.cards[j] = x) {};
+        }
     }
 
     export class Game {
         constructor() {
             var myDeck = new Deck();
+            myDeck.shuffle();
 
             console.log(myDeck.cards);
         }
