@@ -1,52 +1,48 @@
 var Estimations;
 (function (Estimations) {
-    (function (Suits) {
-        Suits._map = [];
-        Suits.Hearts = 1;
-        Suits._map[2] = "Diamonds";
-        Suits.Diamonds = 2;
-        Suits._map[3] = "Clubs";
-        Suits.Clubs = 3;
-        Suits._map[4] = "Spades";
-        Suits.Spades = 4;
-    })(Estimations.Suits || (Estimations.Suits = {}));
-    var Suits = Estimations.Suits;
-    (function (Ranks) {
-        Ranks._map = [];
-        Ranks.Ace = 1;
-        Ranks._map[2] = "Two";
-        Ranks.Two = 2;
-        Ranks._map[3] = "Three";
-        Ranks.Three = 3;
-        Ranks._map[4] = "Four";
-        Ranks.Four = 4;
-        Ranks._map[5] = "Five";
-        Ranks.Five = 5;
-        Ranks._map[6] = "Six";
-        Ranks.Six = 6;
-        Ranks._map[7] = "Seven";
-        Ranks.Seven = 7;
-        Ranks._map[8] = "Eight";
-        Ranks.Eight = 8;
-        Ranks._map[9] = "Nine";
-        Ranks.Nine = 9;
-        Ranks._map[10] = "Ten";
-        Ranks.Ten = 10;
-        Ranks._map[11] = "Jack";
-        Ranks.Jack = 11;
-        Ranks._map[12] = "Queen";
-        Ranks.Queen = 12;
-        Ranks._map[13] = "King";
-        Ranks.King = 13;
-    })(Estimations.Ranks || (Estimations.Ranks = {}));
-    var Ranks = Estimations.Ranks;
     var Card = (function () {
-        function Card(suit, rank) {
-            this.suit = suit;
+        function Card(rank, suit) {
             this.rank = rank;
+            this.suit = suit;
         }
         Card.compare = function compare(a, b) {
             return (a.suit * 10 + a.rank) - (b.suit * 10 + b.rank);
+        };
+        Card.prototype.print = function () {
+            if(this.suit == 1 || this.suit == 2) {
+                process.stdout.write((this.getSymbol()).red);
+                process.stdout.write((this.getValue()).red);
+            } else {
+                process.stdout.write((this.getSymbol()).grey);
+                process.stdout.write((this.getValue()).grey);
+            }
+        };
+        Card.prototype.getSymbol = function () {
+            if(this.suit == 1) {
+                return '♥';
+            }
+            if(this.suit == 2) {
+                return '♦';
+            }
+            if(this.suit == 3) {
+                return '♣';
+            }
+            if(this.suit == 4) {
+                return '♠';
+            }
+            return '?';
+        };
+        Card.prototype.getValue = function () {
+            if(this.rank == 11) {
+                return 'J';
+            }
+            if(this.rank == 12) {
+                return 'Q';
+            }
+            if(this.rank == 13) {
+                return 'K';
+            }
+            return this.rank.toString();
         };
         return Card;
     })();
@@ -83,6 +79,9 @@ var Estimations;
         }
         Deck.MAX_CARDS = 52;
         Deck.prototype.shuffle = function () {
+            this.cards.forEach(function (c) {
+                c.print();
+            });
         };
         Deck.prototype.dealTo = function (players) {
             var playerIndex = 0;
@@ -145,7 +144,6 @@ var Estimations;
         }
         Round.prototype.play = function () {
             var _this = this;
-            console.log('starting round...');
             this.deck.dealTo(this.game.players);
             this.game.players.forEach(function (p) {
                 _this.estimates.push(p.getEstimate());
@@ -166,12 +164,8 @@ var Estimations;
     var Game = (function () {
         function Game() {
             this.rounds = new Array();
-            this.players = [
-                new Player("Bram", this), 
-                new Player("Player2", this), 
-                new Player("Player3", this), 
-                new Player("Player4", this)
-            ];
+        }
+        Game.prototype.start = function () {
             while(true) {
                 if(this.rounds.length == Math.floor(Deck.MAX_CARDS / this.players.length)) {
                     break;
@@ -180,43 +174,21 @@ var Estimations;
                 this.currentRound.play();
                 this.rounds.push(this.currentRound);
             }
-        }
+        };
         return Game;
     })();
     Estimations.Game = Game;    
 })(Estimations || (Estimations = {}));
 var program = require('commander');
+var colors = require('colors');
 program.version('0.0.1');
-var namesMap = {
-    11: 'J',
-    12: 'Q',
-    13: 'K'
-};
-var symbols = [
-    {
-        key: Estimations.Suits.Spades,
-        value: '♠',
-        color: 'black'
-    }, 
-    {
-        key: Estimations.Suits.Clubs,
-        value: '♣',
-        color: 'black'
-    }, 
-    {
-        key: Estimations.Suits.Diamonds,
-        value: '♦',
-        color: 'red'
-    }, 
-    {
-        key: Estimations.Suits.Hearts,
-        value: '♥',
-        color: 'red'
-    }
-];
-function getName(suit, rank) {
-    return '';
-}
 console.log('Starting game...');
 var game = new Estimations.Game();
+game.players = [
+    new Estimations.Player("Bram", game), 
+    new Estimations.Player("Player2", game), 
+    new Estimations.Player("Player3", game), 
+    new Estimations.Player("Player4", game)
+];
+game.start();
 //@ sourceMappingURL=main.js.map
