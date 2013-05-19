@@ -187,30 +187,36 @@ var Estimations;
 })(Estimations || (Estimations = {}));
 var program = require('commander');
 program.version('0.0.1');
-var suitNames = [
-    "Hearts", 
-    "Diamonds", 
-    "Clubs", 
-    "Spades"
-];
-var rankNames = [
-    "Ace", 
-    "Two", 
-    "Three", 
-    "Four", 
-    "Five", 
-    "Six", 
-    "Seven", 
-    "Eight", 
-    "Nine", 
-    "Ten", 
-    "Jack", 
-    "Queen", 
-    "King"
+var namesMap = {
+    11: 'J',
+    12: 'Q',
+    13: 'K'
+};
+var symbols = [
+    {
+        key: Estimations.Suits.Spades,
+        value: '♠',
+        color: 'black'
+    }, 
+    {
+        key: Estimations.Suits.Clubs,
+        value: '♣',
+        color: 'black'
+    }, 
+    {
+        key: Estimations.Suits.Diamonds,
+        value: '♦',
+        color: 'red'
+    }, 
+    {
+        key: Estimations.Suits.Hearts,
+        value: '♥',
+        color: 'red'
+    }
 ];
 function getName(suit, rank) {
-    return rankNames[rank - 1] + ' of ' + suitNames[suit - 1];
+    return '';
 }
-console.log('Starting game... ♥♦♣♠');
+console.log('Starting game...');
 var game = new Estimations.Game();
 //@ sourceMappingURL=main.js.map
