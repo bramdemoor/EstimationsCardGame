@@ -133,7 +133,7 @@ function getName(suit: Estimations.Suits, rank: Estimations.Ranks) {
     return rankNames[rank-1] + ' of ' + suitNames[suit-1]
 }
 
-console.log('Starting game...');
+console.log('Starting game... ♥♦♣♠');
 
 var game = new Estimations.Game();
 

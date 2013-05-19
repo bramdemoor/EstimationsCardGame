@@ -211,6 +211,6 @@ var rankNames = [
 function getName(suit, rank) {
     return rankNames[rank - 1] + ' of ' + suitNames[suit - 1];
 }
-console.log('Starting game...');
+console.log('Starting game... ♥♦♣♠');
 var game = new Estimations.Game();
 //@ sourceMappingURL=main.js.map
