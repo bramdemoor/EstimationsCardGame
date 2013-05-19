@@ -1,6 +1,10 @@
 /// <reference path="node.ts" />
 /// <reference path="commander.d.ts" />
 
+var util = require("util");
+var program = require('commander');
+var colors = require('colors');
+
 module Estimations {
     export class Card {
         constructor(public rank: number, public suit: number) {}
@@ -49,6 +53,7 @@ module Estimations {
         cards: Card[] = new Card[]();
 
         constructor(cardsToRemoveCount: number = 0) {
+            util.debug('Initial deck');
             for(var n = 0; n<13; n++) for(var s=0; s<4; s++) this.cards.push(new Card(n+1, s+1));
             this.shuffle();
             this.cards.splice(0, cardsToRemoveCount);
@@ -133,10 +138,6 @@ module Estimations {
         rounds: Round[] = new Round[];
         currentRound: Round;
 
-        constructor() {
-
-        }
-
         start() {
             while(true) {
                 if(this.rounds.length == Math.floor(Deck.MAX_CARDS / this.players.length)) break;
@@ -145,16 +146,17 @@ module Estimations {
                 this.rounds.push(this.currentRound);
             }
         }
+
+        advance(turns = 1) {
+            this.start();
+        }
     }
 }
 
-var program = require('commander');
-var colors = require('colors');
+
 
 program
     .version('0.0.1');
-
-console.log('Starting game...');
 
 var game: Estimations.Game = new Estimations.Game();
 game.players = [
@@ -163,4 +165,4 @@ game.players = [
     new Estimations.Player("Player3", game),
     new Estimations.Player("Player4", game)
 ];
-game.start();
+game.advance();

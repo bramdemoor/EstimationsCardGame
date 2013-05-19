@@ -1,3 +1,6 @@
+var util = require("util");
+var program = require('commander');
+var colors = require('colors');
 var Estimations;
 (function (Estimations) {
     var Card = (function () {
@@ -69,6 +72,7 @@ var Estimations;
         function Deck(cardsToRemoveCount) {
             if (typeof cardsToRemoveCount === "undefined") { cardsToRemoveCount = 0; }
             this.cards = new Array();
+            util.debug('Initial deck');
             for(var n = 0; n < 13; n++) {
                 for(var s = 0; s < 4; s++) {
                     this.cards.push(new Card(n + 1, s + 1));
@@ -175,14 +179,15 @@ var Estimations;
                 this.rounds.push(this.currentRound);
             }
         };
+        Game.prototype.advance = function (turns) {
+            if (typeof turns === "undefined") { turns = 1; }
+            this.start();
+        };
         return Game;
     })();
     Estimations.Game = Game;    
 })(Estimations || (Estimations = {}));
-var program = require('commander');
-var colors = require('colors');
 program.version('0.0.1');
-console.log('Starting game...');
 var game = new Estimations.Game();
 game.players = [
     new Estimations.Player("Bram", game), 
@@ -190,5 +195,5 @@ game.players = [
     new Estimations.Player("Player3", game), 
     new Estimations.Player("Player4", game)
 ];
-game.start();
+game.advance();
 //@ sourceMappingURL=main.js.map
