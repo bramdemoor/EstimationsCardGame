@@ -1,4 +1,4 @@
-module Bdm.Estimations {
+module Estimations {
 
     export enum Suits { Hearts = 1, Diamonds, Clubs, Spades }
     export enum Ranks { Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King }
@@ -32,7 +32,7 @@ module Bdm.Estimations {
 
         shuffle() {
             // Array shuffle by  Jonas Raoni Soares Silva | http://jsfromhell.com/array/shuffle [v1.0]
-            for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i), x = this.cards[--i], this.cards[i] = this.cards[j], this.cards[j] = x) {}
+            //for(var j, x, i = this.cards.length; i; j = parseInt(Math.random() * i), x = this.cards[--i], this.cards[i] = this.cards[j], this.cards[j] = x) {}
         }
 
         dealTo(players: Player[]) {
@@ -88,6 +88,8 @@ module Bdm.Estimations {
         }
 
         play() {
+            console.log('starting round...');
+
             this.deck.dealTo(this.game.players);
             this.game.players.forEach((p: Player) => { this.estimates.push(p.getEstimate()); } );
 
@@ -118,3 +120,20 @@ module Bdm.Estimations {
         }
     }
 }
+
+var program = require('commander');
+
+program
+    .version('0.0.1');
+
+var suitNames = ["Hearts", "Diamonds", "Clubs", "Spades"];
+var rankNames = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"];
+
+function getName(suit: Estimations.Suits, rank: Estimations.Ranks) {
+    return rankNames[rank-1] + ' of ' + suitNames[suit-1]
+}
+
+console.log('Starting game...');
+
+var game = new Estimations.Game();
+
